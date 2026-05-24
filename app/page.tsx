@@ -1,19 +1,18 @@
-import { Button } from "@/components/ui/button"
+import Link from "next/link";
 
-export default function Page() {
+export default function HomePage() {
   return (
-    <div className="flex min-h-svh p-6">
-      <div className="flex max-w-md min-w-0 flex-col gap-4 text-sm leading-loose">
-        <div>
-          <h1 className="font-medium">Project ready!</h1>
-          <p>You may now add components and start building.</p>
-          <p>We&apos;ve already added the button component for you.</p>
-          <Button className="mt-2">Button</Button>
-        </div>
-        <div className="font-mono text-xs text-muted-foreground">
-          (Press <kbd>d</kbd> to toggle dark mode)
-        </div>
+    <main className="mx-auto max-w-6xl p-6 text-sm text-zinc-200">
+      <div className="mb-6 flex items-center justify-between">
+        <h1 className="text-xl font-semibold">Agnost Connect</h1>
+        <Link href="/sessions" className="rounded border border-zinc-800 px-3 py-1.5 hover:bg-zinc-900">
+          Open Sessions
+        </Link>
       </div>
-    </div>
-  )
+      <p className="max-w-2xl text-zinc-400">
+        Lightweight interoperability and observability layer for AI agents. Ingest normalized
+        framework telemetry and inspect traces.
+      </p>
+    </main>
+  );
 }
