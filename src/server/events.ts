@@ -18,16 +18,19 @@ export async function upsertSession(sessionId: string, framework: string) {
 
 export async function insertEvents(agentEvents: AgentEvent[]) {
   if (!agentEvents.length) return;
-  await db.insert(events).values(
-    agentEvents.map((event) => ({
-      id: event.id,
-      sessionId: event.sessionId,
-      eventType: event.eventType,
-      framework: event.framework,
-      timestamp: new Date(event.timestamp),
-      payload: event,
-    })),
-  );
+  await db
+    .insert(events)
+    .values(
+      agentEvents.map((event) => ({
+        id: event.id,
+        sessionId: event.sessionId,
+        eventType: event.eventType,
+        framework: event.framework,
+        timestamp: new Date(event.timestamp),
+        payload: event,
+      })),
+    )
+    .onConflictDoNothing();
 }
 
 export async function getSessionsList() {
