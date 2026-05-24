@@ -12,11 +12,12 @@
     "typecheck": "tsc --noEmit",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
-    "db:studio": "drizzle-kit studio",
-    "seed": "bun run src/server/seed.ts"
+    "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
-    "ai": "^4.3.20",
+    "@ai-sdk/openai": "^3.0.65",
+    "@ai-sdk/react": "^3.0.193",
+    "ai": "^6.0.191",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "drizzle-orm": "^0.44.7",
