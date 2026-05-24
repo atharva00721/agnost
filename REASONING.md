@@ -43,6 +43,14 @@ I prioritized simplicity because this is a seed-stage infra MVP. The fastest way
 - Less runtime lock-in
 - Easier local debugging and adoption
 
+## Two integration modes shipped
+
+1. **Playground adapter hooking** (`POST /api/chat`): Vercel AI SDK's `streamText` is called directly with an `onStepFinish` callback that normalizes each step's text, tool calls, and tool results into `AgentEvent` objects. Events are persisted to Postgres mid-stream, and the playground polls `/api/sessions/:id` every 1.5s so the trace panel reflects events as the agent runs. This proves the adapter pattern works with real framework traces in real time — no batching delay, no out-of-band ingestion.
+
+2. **External SDK ingestion** (`POST /api/integrations/:framework/events`): Accepts pre-collected traces and routes through the adapter registry. Designed for teams that collect telemetry from a different runtime process than the one calling the integration endpoint.
+
+The `onStepFinish` approach is the key innovation — it intercepts framework events at the source without requiring a separate SDK or middleware layer. Every `streamText` call becomes observable by default.
+
 ## Why append-only event storage?
 - Immutable execution history
 - Better auditability and postmortems
@@ -59,7 +67,7 @@ The v1 choice is rule-based insights (failed tools, retries, repeated user messa
 Intentionally excluded:
 - Kafka / Redis / queues
 - Microservices
-- Realtime streaming infra
+- Realtime streaming infra (websockets)
 - Vector DB + semantic search
 - Authentication / tenancy stack
 - Distributed tracing vendor integration
@@ -72,6 +80,8 @@ Why excluded: each adds operational or product complexity before we validate the
 ## Integration mode shipped
 `POST /api/integrations/:framework/events` accepts framework-specific traces and normalizes through an adapter registry. This is the low-friction path: keep existing agent runtime code, add a small ingestion client.
 
+Additionally, the `/playground` page demonstrates direct adapter hooking — the chat API route wires `streamText.onStepFinish` into the event store, so framework traces are normalized inline without a separate SDK.
+
 ## How we minimize friction
 - No proxy process required
 - No new runtime SDK lock-in
@@ -79,7 +89,7 @@ Why excluded: each adds operational or product complexity before we validate the
 - Shared normalized schema downstream
 
 ## Distribution vision
-Long-term, onboarding should feel like adding “observability middleware”:
+Long-term, onboarding should feel like adding "observability middleware":
 1. install lightweight package,
 2. register framework adapter,
 3. emit traces,
